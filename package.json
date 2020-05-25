@@ -1,0 +1,57 @@
+{
+    "name": "prettier-plugin-pegjs",
+    "description": "A Prettier plugin for formatting Pegjs grammars",
+    "version": "0.1.0",
+    "author": {
+        "name": "Jason Siefken",
+        "email": "siefkenj@gmail.com"
+    },
+    "keywords": [
+        "pegjs",
+        "parser",
+        "prettier"
+    ],
+    "main": "build/prettier-plugin-pegjs.js",
+    "files": [
+        "build/prettier-plugin-pegjs.js"
+    ],
+    "scripts": {
+        "test": "jest src/tests",
+        "watch": "webpack --watch",
+        "build": "mkdirp build; webpack"
+    },
+    "dependencies": {
+        "prettier": "^2.0.5"
+    },
+    "devDependencies": {
+        "@babel/core": "7.9.0",
+        "@babel/preset-env": "7.9.0",
+        "babel-jest": "^24.9.0",
+        "babel-loader": "8.1.0",
+        "eslint": "^6.8.0",
+        "jest": "^24.9.0",
+        "mkdirp": "1.0.4",
+        "pegjs": "0.10.0",
+        "pegjs-loader": "^0.5.6",
+        "webpack": "4.42.0",
+        "webpack-cli": "^3.3.11"
+    },
+    "jest": {
+        "transform": {
+            "\\.js$": "babel-jest",
+            "\\.pegjs$": "<rootDir>/src/tests/pegjs-preprocessor.js"
+        }
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/siefkenj/prettier-plugin-pegjs.git"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/siefkenj/prettier-plugin-pegjs/issues"
+    },
+    "homepage": "https://github.com/siefkenj/prettier-plugin-pegjs#readme",
+    "engines": {
+        "node": ">= 8.0"
+    }
+}
