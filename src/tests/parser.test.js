@@ -69,7 +69,7 @@ describe("Basic parse", () => {
 console.log("src", src)
             const ast = pegjsParser.parse(src);
 
-xxx=String.raw`
+src=String.raw`
 {
 
     // Used as a shorthand property name for "LabeledExpression"

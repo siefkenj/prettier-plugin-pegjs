@@ -1,12 +1,15 @@
 //import Prettier from "prettier/standalone";
 
-// Cant do this import when doing the git-hosted version of prettier
-//import { builders, utils } from "prettier/doc";
-import prettier from "prettier";
+// If we pull in "prettier", we also pull in the `fs` module which
+// prevents the plugin from working in the browser, so we
+// pull in the standalone version.
+import Prettier from "prettier/standalone"
+//import { builders, utils } from "prettier/standalone/doc";
 import { parse } from "./libs/parser";
-import { util } from "prettier";
+//import { util } from "prettier";
 
-const { builders, utils } = prettier.doc;
+const {util} = Prettier
+const {builders, utils} = Prettier.doc
 
 // Commands to build the prettier syntax tree
 const {

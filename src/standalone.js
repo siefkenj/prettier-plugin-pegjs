@@ -1,9 +1,13 @@
 //
 // This file contains a standalone parser which includes Prettier
 //
-//import Prettier from "prettier/standalone";
-import Prettier from "prettier";
+import Prettier from "prettier/standalone";
 import * as prettierPluginPegjs from "./prettier-plugin-pegjs";
+
+// Because we're importing the standalone version of prettier, we also have
+// to import the specific plugins we want
+
+import babelPlugin from "prettier/parser-babel";
 
 /**
  * Format `source` LaTeX code using Prettier to format/render
@@ -21,7 +25,7 @@ function printPrettier(source = "", options = {}) {
         tabWidth: 2,
         ...options,
         parser: "pegjs-parser",
-        plugins: [prettierPluginPegjs],
+        plugins: [prettierPluginPegjs, babelPlugin],
     });
 }
 
