@@ -4,14 +4,14 @@ const path = require("path");
 module.exports = {
     entry: {
         "standalone": "./src/standalone.js",
-        "index": "./src/prettier-plugin-pegjs.js",
+        "prettier-plugin-pegjs": "./src/prettier-plugin-pegjs.js",
     },
     mode: "development",
     devtool: "source-map",
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname, "build"),
-        library: "latex",
+        library: "prettierPluginPegjs",
         globalObject: `(() => {
             if (typeof self !== 'undefined') {
                 return self;
