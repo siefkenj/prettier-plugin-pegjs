@@ -13,11 +13,14 @@
     ],
     "main": "build/prettier-plugin-pegjs.js",
     "files": [
-        "build/prettier-plugin-pegjs.js"
+        "build/prettier-plugin-pegjs.js",
+        "build/prettier-plugin-pegjs.js.map",
+        "build/standalone.js",
+        "build/standalone.js.map"
     ],
     "scripts": {
         "test": "jest src/tests",
-        "watch": "webpack --watch",
+        "watch": "mkdirp build; webpack --watch",
         "build": "mkdirp build; webpack"
     },
     "dependencies": {

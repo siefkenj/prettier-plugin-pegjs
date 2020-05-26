@@ -19,13 +19,18 @@ import babelPlugin from "prettier/parser-babel";
  * @returns {string} formatted code
  */
 function printPrettier(source = "", options = {}) {
+    // Load the prettier and babel plugins, but also allow
+    // other plugins to be passed in.
+    const plugins = options.plugins || []
+    plugins.push(prettierPluginPegjs, babelPlugin)
+
     return Prettier.format(source, {
         printWidth: 80,
         useTabs: false,
         tabWidth: 2,
         ...options,
         parser: "pegjs-parser",
-        plugins: [prettierPluginPegjs, babelPlugin],
+        plugins,
     });
 }
 
