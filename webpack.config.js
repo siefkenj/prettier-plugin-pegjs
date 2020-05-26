@@ -4,7 +4,7 @@ const path = require("path");
 module.exports = {
     entry: {
         "standalone": "./src/standalone.js",
-        "prettier-plugin-pegjs": "./src/prettier-plugin-pegjs.js",
+        "index": "./src/prettier-plugin-pegjs.js",
     },
     mode: "development",
     devtool: "source-map",
