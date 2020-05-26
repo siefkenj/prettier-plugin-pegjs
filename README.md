@@ -1,6 +1,6 @@
 # prettier-plugin-pegjs
 
-A prettier plugin for formatting Pegjs grammars
+A prettier plugin for formatting Pegjs grammars. You can try it out online in the [playground](https://siefkenj.github.io/prettier-pegjs-playground/)
 
 ## Intro
 

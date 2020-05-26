@@ -1,0 +1,303 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Printer Prints grammars with actions 1`] = `
+"start = (a:\\"a\\") & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 2`] = `
+"start = (a:\\"a\\")? & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 3`] = `
+"start = (a:\\"a\\")* & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 4`] = `
+"start = (a:\\"a\\")+ & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 5`] = `
+"start = $(a:\\"a\\") & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 6`] = `
+"start = &(a:\\"a\\") \\"a\\" & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 7`] = `
+"start = !(a:\\"a\\") \\"b\\" & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 8`] = `
+"start = b:(a:\\"a\\") & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 9`] = `
+"start = (\\"a\\" b:\\"b\\" \\"c\\") & { return b === \\"b\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 10`] = `
+"start = a:\\"a\\" { return a; } & { return a === \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 11`] = `
+"start = \\"a\\" / b:\\"b\\" / \\"c\\" & { return b === \\"b\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 12`] = `
+"start = (a:\\"a\\") ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 13`] = `
+"start = (a:\\"a\\")? ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 14`] = `
+"start = (a:\\"a\\")* ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 15`] = `
+"start = (a:\\"a\\")+ ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 16`] = `
+"start = $(a:\\"a\\") ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 17`] = `
+"start = &(a:\\"a\\") \\"a\\" ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 18`] = `
+"start = !(a:\\"a\\") \\"b\\" ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 19`] = `
+"start = b:(a:\\"a\\") ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 20`] = `
+"start = (\\"a\\" b:\\"b\\" \\"c\\") ! { return b !== \\"b\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 21`] = `
+"start = a:\\"a\\" { return a; } ! { return a !== \\"a\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 22`] = `
+"start = \\"a\\" / b:\\"b\\" / \\"c\\" ! { return b !== \\"b\\"; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 23`] = `
+"start = (a:\\"a\\") { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 24`] = `
+"start = (a:\\"a\\")? { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 25`] = `
+"start = (a:\\"a\\")* { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 26`] = `
+"start = (a:\\"a\\")+ { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 27`] = `
+"start = $(a:\\"a\\") { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 28`] = `
+"start = &(a:\\"a\\") \\"a\\" { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 29`] = `
+"start = !(a:\\"a\\") \\"b\\" { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 30`] = `
+"start = b:(a:\\"a\\") { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 31`] = `
+"start = (\\"a\\" b:\\"b\\" \\"c\\") { return b; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 32`] = `
+"start = a:\\"a\\" { return a; } { return a; }
+"
+`;
+
+exports[`Printer Prints grammars with actions 33`] = `
+"start = \\"a\\" / b:\\"b\\" / \\"c\\" { return b; }
+"
+`;
+
+exports[`Printer Prints grammars with comments 1`] = `
+"start
+  // a comment
+  = a
+  / b
+"
+`;
+
+exports[`Printer Prints grammars with comments 2`] = `
+"start
+  = a // a comment
+  / b
+"
+`;
+
+exports[`Printer Prints grammars with comments 3`] = `
+"start
+  = a
+  // a comment
+  / b
+"
+`;
+
+exports[`Printer Prints grammars with comments 4`] = `
+"start
+  = a
+  / b
+  // a comment
+"
+`;
+
+exports[`Printer Prints grammars with comments 5`] = `
+"// a comment
+start
+  = a
+  / b
+"
+`;
+
+exports[`Printer Prints grammars with comments 6`] = `
+"start
+  /*inline comment*/ = a
+  / b
+"
+`;
+
+exports[`Printer Prints grammars with comments 7`] = `
+"start
+  = a
+  / /*inline comment*/ b
+"
+`;
+
+exports[`Printer Prints grammars with comments 8`] = `
+"start
+  = a
+  / x /*inline comment*/ b
+"
+`;
+
+exports[`Printer Prints grammars with comments 9`] = `
+"start /*inline comment*/ \\"Start Label\\"
+  = a
+  / b
+"
+`;
+
+exports[`Printer Prints grammars with initalizer 1`] = `
+"{ console.log(\\"initializing\\"); }
+
+Rule
+  = a
+  / b
+  / c
+"
+`;
+
+exports[`Printer Prints grammars with initalizer 2`] = `
+"{ console.log(\\"initializing\\"); }
+
+Rule
+  = a
+  / b
+  / c
+"
+`;
+
+exports[`Printer Prints grammars without actions 1`] = `
+"Rule
+  = a
+  / b
+  / c
+"
+`;
+
+exports[`Printer Prints grammars without actions 2`] = `
+"Rule = a
+"
+`;
+
+exports[`Printer Prints grammars without actions 3`] = `
+"Rule = [a-zA-Z]
+"
+`;
+
+exports[`Printer Prints grammars without actions 4`] = `
+"Rule = a*
+"
+`;
+
+exports[`Printer Prints grammars without actions 5`] = `
+"Rule = (a / b)?
+"
+`;
+
+exports[`Printer Prints grammars without actions 6`] = `
+"Rule = (a / b / c)?
+"
+`;
+
+exports[`Printer Prints grammars without actions 7`] = `
+"Rule = (a / (b / c)+)?
+"
+`;
+
+exports[`Printer Prints grammars without actions 8`] = `
+"Rule = $(a / (b / c)+)?
+"
+`;
+
+exports[`Printer Prints grammars without actions 9`] = `
+"Rule = $(a / (b / c)+)?
+
+OtherRule = Rule &\\"q\\"
+"
+`;

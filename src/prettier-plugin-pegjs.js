@@ -1,5 +1,3 @@
-
-
 import Prettier from "prettier/standalone";
 import { parse } from "./libs/parser";
 import { printPegjsAst, printComment, embed } from "./libs/printer";
@@ -163,3 +161,5 @@ export const defaultOptions = {
     tabWidth: 2,
     actionParser: "babel",
 };
+
+export default { languages, parsers, printers, options };

@@ -1,6 +1,6 @@
 import util from "util";
 
-import * as pegjsParser from "../libs/parser";
+import { printPrettier } from "../standalone";
 
 /* eslint-env jest */
 
@@ -10,16 +10,27 @@ console.log = (...args) => {
     origLog(...args.map((x) => util.inspect(x, false, 10, true)));
 };
 
-describe("Basic parse", () => {
-    it("Parses trivial grammar", () => {
-        pegjsParser.parse('a = "a"');
-        pegjsParser.parse('a \n = "a"');
-        pegjsParser.parse('a = \n"a"');
-        pegjsParser.parse('a = "a" / "b"');
-    });
+describe("Printer", () => {
+    it("Prints grammars without actions", () => {
+        const sources = [
+            "Rule = a/b/c",
+            "Rule = a",
+            "Rule = [a-zA-Z]",
+            "Rule = a *",
+            "Rule = (a/b)?",
+            "Rule = (a/b/c)   ?",
+            "Rule = (a/(b/c)+)   ?",
+            "Rule = $(a/(b/c)+)   ?",
+            "Rule = $(a/(b/c)+)   ?\n OtherRule= Rule & 'q'",
+        ];
 
-    it("Parses simple grammars from pegjs test suite", () => {
-        const grammars = [
+        for (const src of sources) {
+            const formatted = printPrettier(src, { printWidth: 80 });
+            expect(formatted).toMatchSnapshot();
+        }
+    });
+    it("Prints grammars with actions", () => {
+        const sources = [
             "start = (a:'a') &{ return a === 'a'; }",
             "start = (a:'a')? &{ return a === 'a'; }",
             "start = (a:'a')* &{ return a === 'a'; }",
@@ -55,8 +66,38 @@ describe("Basic parse", () => {
             "start = ('a' / b:'b' / 'c') { return b; }",
         ];
 
-        for (const grammar of grammars) {
-            pegjsParser.parse(grammar);
+        for (const src of sources) {
+            const formatted = printPrettier(src, { printWidth: 80 });
+            expect(formatted).toMatchSnapshot();
+        }
+    });
+    it("Prints grammars with initalizer", () => {
+        const sources = [
+            "{console.log('initializing')}; Rule = a/b/c",
+            "{console.log('initializing')}\n\n Rule = a/b/c",
+        ];
+
+        for (const src of sources) {
+            const formatted = printPrettier(src, { printWidth: 80 });
+            expect(formatted).toMatchSnapshot();
+        }
+    });
+    it("Prints grammars with comments", () => {
+        const sources = [
+            "start = // a comment\n a / b",
+            "start = a // a comment\n / b",
+            "start = a \n// a comment\n / b",
+            "start = a / \n// a comment\n  b",
+            "// a comment\n start = a / b",
+            "start /*inline comment*/= a / b",
+            "start = a / /*inline comment*/ b",
+            "start = a / x /*inline comment*/ b",
+            'start /*inline comment*/ "Start Label"= a / b',
+        ];
+
+        for (const src of sources) {
+            const formatted = printPrettier(src, { printWidth: 80 });
+            expect(formatted).toMatchSnapshot();
         }
     });
 });
