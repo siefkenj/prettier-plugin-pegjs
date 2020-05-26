@@ -20,7 +20,7 @@ const {
     indent,
     join,
     //markAsRoot,
-    //breakParent,
+    breakParent,
 } = builders;
 
 function wrapInParenGroup(doc) {
@@ -103,7 +103,7 @@ function nodeExpressionNeedsWrapping(node) {
 export function printPegjsAst(path, options, print) {
     const node = path.getValue();
 
-    let lhs, rhs, label, prefix, suffix, body, delimiters;
+    let lhs, rhs, label, prefix, suffix, body, delimiters, parent;
     switch (node.type) {
         case "grammar":
             // This is the root node of a Pegjs grammar
@@ -165,6 +165,13 @@ export function printPegjsAst(path, options, print) {
             for (let i = 0; i < delimiters.length; i++) {
                 body.push(line, delimiters[i], " ", rhs[i + 1]);
             }
+
+            parent = path.getParentNode()
+            if (parent.type === "rule") {
+                // Rules are the top-level objects of a grammar. If we are the child
+                // of a rule, we want to line-break nomatter what.
+                body.push(breakParent)
+            }
             return concat(body);
 
         case "literal":
@@ -177,6 +184,7 @@ export function printPegjsAst(path, options, print) {
             return wrapInParenGroup(path.call(print, "expression"));
 
         case "sequence":
+
             return group(indent(join(line, path.map(print, "elements"))));
 
         case "labeled":

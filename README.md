@@ -71,7 +71,7 @@ and then run it via
 ```bash
 yarn run prettier path/to/grammar.pegjs --write
 # or
-npm run prettier -- path/to/grammar.pegjs --write
+npm run prettier path/to/grammar.pegjs --write
 ```
 
 If you installed globally, run
