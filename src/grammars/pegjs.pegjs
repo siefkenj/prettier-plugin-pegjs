@@ -29,7 +29,58 @@
   const RESERVED_WORDS = {};
 
   // Populate `RESERVED_WORDS` using the optional option `reservedWords`
-  const reservedWords = options.reservedWords || ["if", "in"];
+  const reservedWords = options.reservedWords || [
+    // Keyword
+    "break",
+    "case",
+    "catch",
+    "continue",
+    "debugger",
+    "default",
+    "delete",
+    "do",
+    "else",
+    "finally",
+    "for",
+    "function",
+    "if",
+    "in",
+    "instanceof",
+    "new",
+    "return",
+    "switch",
+    "this",
+    "throw",
+    "try",
+    "typeof",
+    "var",
+    "void",
+    "while",
+    "with",
+
+    // FutureReservedWord
+    "class",
+    "const",
+    "enum",
+    "export",
+    "extends",
+    "implements",
+    "import",
+    "interface",
+    "let",
+    "package",
+    "private",
+    "protected",
+    "public",
+    "static",
+    "super",
+    "yield",
+
+    // Literal
+    "false",
+    "null",
+    "true",
+  ];
   if (Array.isArray(reservedWords))
     reservedWords.forEach((word) => {
       RESERVED_WORDS[word] = true;
@@ -49,27 +100,23 @@
 
   // Used by `addComment` to store comments for the Grammar AST
   const comments = [];
-  options.extractComments = true;
 
   // Helper that collects all the comments to pass to the Grammar AST
   function addComment(text, multiline) {
-    //console.log("found comment", text)
-    if (options.extractComments) {
-      const loc = location();
+    const loc = location();
 
-      // If there is a node already stored with our starting location,
-      // we are being processed a second time, so just it
-      if (comments.find((c) => c.loc.start.offset === loc.start.offset)) {
-        return text;
-      }
-
-      comments.push({
-        type: "comment",
-        value: text,
-        multiline: multiline,
-        loc,
-      });
+    // If there is a node already stored with our starting location,
+    // we are being processed a second time, so just it
+    if (comments.find((c) => c.loc.start.offset === loc.start.offset)) {
+      return text;
     }
+
+    comments.push({
+      type: "comment",
+      value: text,
+      multiline: multiline,
+      loc,
+    });
 
     return text;
   }
@@ -87,7 +134,6 @@ Grammar
         initializer,
         rules,
         comments,
-        location: location(),
       });
     }
 
@@ -96,11 +142,6 @@ Initializer
       return code;
     }
 
-//Rule
-//  = name:Identifier __ displayName:(a:(a:StringLiteral {return createNode("stringliteral", {value: a})}) __ {return a})?
-//    delimiter:("=" {return createNode("delimiter", {value: "="})}) __ expression:Expression EOS {
-//        return createNode( "rule", { name, displayName, expression, delimiter } );
-//    }
 Rule
   = name:Identifier
     __
