@@ -46,12 +46,12 @@ exports[`Printer Prints grammars with actions 9`] = `
 `;
 
 exports[`Printer Prints grammars with actions 10`] = `
-"start = a:\\"a\\" { return a; } & { return a === \\"a\\"; }
+"start = (a:\\"a\\" { return a; }) & { return a === \\"a\\"; }
 "
 `;
 
 exports[`Printer Prints grammars with actions 11`] = `
-"start = \\"a\\" / b:\\"b\\" / \\"c\\" & { return b === \\"b\\"; }
+"start = (\\"a\\" / b:\\"b\\" / \\"c\\") & { return b === \\"b\\"; }
 "
 `;
 
@@ -101,12 +101,12 @@ exports[`Printer Prints grammars with actions 20`] = `
 `;
 
 exports[`Printer Prints grammars with actions 21`] = `
-"start = a:\\"a\\" { return a; } ! { return a !== \\"a\\"; }
+"start = (a:\\"a\\" { return a; }) ! { return a !== \\"a\\"; }
 "
 `;
 
 exports[`Printer Prints grammars with actions 22`] = `
-"start = \\"a\\" / b:\\"b\\" / \\"c\\" ! { return b !== \\"b\\"; }
+"start = (\\"a\\" / b:\\"b\\" / \\"c\\") ! { return b !== \\"b\\"; }
 "
 `;
 
@@ -156,12 +156,12 @@ exports[`Printer Prints grammars with actions 31`] = `
 `;
 
 exports[`Printer Prints grammars with actions 32`] = `
-"start = a:\\"a\\" { return a; } { return a; }
+"start = (a:\\"a\\" { return a; }) { return a; }
 "
 `;
 
 exports[`Printer Prints grammars with actions 33`] = `
-"start = \\"a\\" / b:\\"b\\" / \\"c\\" { return b; }
+"start = (\\"a\\" / b:\\"b\\" / \\"c\\") { return b; }
 "
 `;
 

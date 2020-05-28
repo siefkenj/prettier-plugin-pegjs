@@ -24,15 +24,7 @@ const {
 } = builders;
 
 function wrapInParenGroup(doc) {
-    return group(
-        concat([
-            "(",
-            //indent(concat([indent(concat([softline, doc])), softline, ")"])),
-            indent(concat([softline, doc])),
-            softline,
-            ")",
-        ])
-    );
+    return group(concat(["(", indent(concat([softline, doc])), softline, ")"]));
 }
 
 const SEMANTIC_SUFFIX_MAP = {
@@ -92,6 +84,13 @@ function nodeExpressionNeedsWrapping(node) {
         // so we don't need to wrap them in another set
         return false;
     }
+    // Normally `labeled` expressions are wrapped in parens, but
+    // if they are part of a choice, we don't want them wrapped.
+    // For example `a:Rule {return a}` should *not* become
+    // `(a:Rule) {return a}`.
+    if (node.type === "action" && node.expression.type === "labeled") {
+        return false;
+    }
     if (["choice", "labeled", "action"].includes(node.expression.type)) {
         return true;
     }
@@ -103,7 +102,7 @@ function nodeExpressionNeedsWrapping(node) {
 export function printPegjsAst(path, options, print) {
     const node = path.getValue();
 
-    let lhs, rhs, label, prefix, suffix, body, delimiters, parent;
+    let lhs, rhs, label, prefix, suffix, body, delimiters, parent, tmp;
     switch (node.type) {
         case "grammar":
             // This is the root node of a Pegjs grammar
@@ -166,12 +165,13 @@ export function printPegjsAst(path, options, print) {
                 body.push(line, delimiters[i], " ", rhs[i + 1]);
             }
 
-            parent = path.getParentNode()
-            if (parent.type === "rule") {
+            parent = path.getParentNode();
+            if (parent && parent.type === "rule") {
                 // Rules are the top-level objects of a grammar. If we are the child
                 // of a rule, we want to line-break nomatter what.
-                body.push(breakParent)
+                body.push(breakParent);
             }
+
             return concat(body);
 
         case "literal":
@@ -184,8 +184,17 @@ export function printPegjsAst(path, options, print) {
             return wrapInParenGroup(path.call(print, "expression"));
 
         case "sequence":
-
-            return group(indent(join(line, path.map(print, "elements"))));
+            body = path.map(print, "elements");
+            // Any `action` or `choice` that appears in a sequence needs to
+            // be wrapped in parens.
+            body = body.map((printed, i) => {
+                const child = node.elements[i];
+                if (["action", "choice"].includes(child.type)) {
+                    return wrapInParenGroup(printed);
+                }
+                return printed;
+            });
+            return group(indent(join(line, body)));
 
         case "labeled":
             label = node.label;
@@ -302,13 +311,15 @@ export function embed(path, print, textToDoc, options) {
         );
     }
 
-    let prefix;
+    let prefix, body;
     switch (node.type) {
         case "action":
-            return concat([
-                path.call(print, "expression"),
-                indent(concat([" ", wrapCode(node.code)])),
-            ]);
+            body = path.call(print, "expression");
+            if (nodeExpressionNeedsWrapping(node)) {
+                body = wrapInParenGroup(body);
+            }
+            body = concat([body, indent(concat([" ", wrapCode(node.code)]))]);
+            return body;
         case "semantic_and":
         case "semantic_not":
             prefix = SEMANTIC_SUFFIX_MAP[node.type];
