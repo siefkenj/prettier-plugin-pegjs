@@ -37,7 +37,8 @@
         "pegjs": "0.10.0",
         "pegjs-loader": "^0.5.6",
         "webpack": "4.42.0",
-        "webpack-cli": "^3.3.11"
+        "webpack-cli": "^3.3.11",
+        "resolve-cwd": "^3.0.0"
     },
     "jest": {
         "transform": {
