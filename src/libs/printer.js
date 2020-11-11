@@ -102,7 +102,7 @@ function nodeExpressionNeedsWrapping(node) {
 export function printPegjsAst(path, options, print) {
     const node = path.getValue();
 
-    let lhs, rhs, label, prefix, suffix, body, delimiters, parent, tmp;
+    let lhs, rhs, label, prefix, suffix, body, delimiters, parent;
     switch (node.type) {
         case "grammar":
             // This is the root node of a Pegjs grammar
@@ -249,6 +249,7 @@ export function printPegjsAst(path, options, print) {
             return concat(["[", prefix, ...lhs, "]", suffix]);
 
         case "comment":
+            // XXX I'm not sure why this is here. I don't think this code is ever reached.
             return concat(["A COMMENT", node.value]);
 
         default:
@@ -258,7 +259,7 @@ export function printPegjsAst(path, options, print) {
             );
     }
 
-    return concat(["abc"]);
+    throw new Error(`Could not find printer for node ${JSON.stringify(node)}`);
 }
 
 /**
@@ -303,12 +304,21 @@ export function embed(path, print, textToDoc, options) {
     function wrapCode(code) {
         // By default, prettier will add a hardline at the end of a parsed document.
         // We don't want this hardline in embedded code.
-        const formatted = utils.stripTrailingHardline(
-            textToDoc(code, { parser: options.actionParser || "babel" })
-        );
-        return group(
-            concat(["{", indent(concat([line, formatted])), line, "}"])
-        );
+        const parser = options.actionParser || "babel";
+        try {
+            const formatted = utils.stripTrailingHardline(
+                textToDoc(code, { parser })
+            );
+            return group(
+                concat(["{", indent(concat([line, formatted])), line, "}"])
+            );
+        } catch (e) {
+            console.warn(
+                `Could not the following code with the '${parser}' parser, so leaving unformatted. Code:`,
+                JSON.stringify(code)
+            );
+            return concat(["{", code, "}"]);
+        }
     }
 
     let prefix, body;
