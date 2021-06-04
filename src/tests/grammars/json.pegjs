@@ -15,14 +15,18 @@
 
 // ----- 2. JSON Grammar -----
 
-JSON_text
-  = ws value:value ws { return value; }
+JSON_text = ws value:value ws { return value; }
 
-begin_array     = ws "[" ws
-begin_object    = ws "{" ws
-end_array       = ws "]" ws
-end_object      = ws "}" ws
-name_separator  = ws ":" ws
+begin_array = ws "[" ws
+
+begin_object = ws "{" ws
+
+end_array = ws "]" ws
+
+end_object = ws "}" ws
+
+name_separator = ws ":" ws
+
 value_separator = ws "," ws
 
 ws "whitespace" = [ \t\n\r]*
@@ -39,28 +43,27 @@ value
   / string
 
 false = "false" { return false; }
-null  = "null"  { return null;  }
-true  = "true"  { return true;  }
+
+null = "null" { return null; }
+
+true = "true" { return true; }
 
 // ----- 4. Objects -----
 
 object
   = begin_object
     members:(
-      head:member
-      tail:(value_separator m:member { return m; })*
-      {
-        var result = {};
+      head:member tail:(value_separator m:member { return m; })* {
+          var result = {};
 
-        [head].concat(tail).forEach(function(element) {
-          result[element.name] = element.value;
-        });
+          [head].concat(tail).forEach(function (element) {
+            result[element.name] = element.value;
+          });
 
-        return result;
-      }
+          return result;
+        }
     )?
-    end_object
-    { return members !== null ? members: {}; }
+    end_object { return members !== null ? members : {}; }
 
 member
   = name:string name_separator value:value {
@@ -72,44 +75,35 @@ member
 array
   = begin_array
     values:(
-      head:value
-      tail:(value_separator v:value { return v; })*
-      { return [head].concat(tail); }
+      head:value tail:(value_separator v:value { return v; })* {
+          return [head].concat(tail);
+        }
     )?
-    end_array
-    { return values !== null ? values : []; }
+    end_array { return values !== null ? values : []; }
 
 // ----- 6. Numbers -----
 
-number "number"
-  = minus? int frac? exp? { return parseFloat(text()); }
+number "number" = minus? int frac? exp? { return parseFloat(text()); }
 
-decimal_point
-  = "."
+decimal_point = "."
 
-digit1_9
-  = [1-9]
+digit1_9 = [1-9]
 
-e
-  = [eE]
+e = [eE]
 
-exp
-  = e (minus / plus)? DIGIT+
+exp = e (minus / plus)? DIGIT+
 
-frac
-  = decimal_point DIGIT+
+frac = decimal_point DIGIT+
 
 int
-  = zero / (digit1_9 DIGIT*)
+  = zero
+  / (digit1_9 DIGIT*)
 
-minus
-  = "-"
+minus = "-"
 
-plus
-  = "+"
+plus = "+"
 
-zero
-  = "0"
+zero = "0"
 
 // ----- 7. Strings -----
 
@@ -120,7 +114,7 @@ char
   = unescaped
   / escape
     sequence:(
-        '"'
+      "\""
       / "\\"
       / "/"
       / "b" { return "\b"; }
@@ -131,20 +125,17 @@ char
       / "u" digits:$(HEXDIG HEXDIG HEXDIG HEXDIG) {
           return String.fromCharCode(parseInt(digits, 16));
         }
-    )
-    { return sequence; }
+    ) { return sequence; }
 
-escape
-  = "\\"
+escape = "\\"
 
-quotation_mark
-  = '"'
+quotation_mark = "\""
 
-unescaped
-  = [^\0-\x1F\x22\x5C]
+unescaped = [^\0-\x1F\x22\x5C]
 
 // ----- Core ABNF Rules -----
 
 // See RFC 4234, Appendix B (http://tools.ietf.org/html/rfc4234).
-DIGIT  = [0-9]
+DIGIT = [0-9]
+
 HEXDIG = [0-9a-f]i

@@ -50,5 +50,13 @@ describe("End to end", () => {
 
             expect(originalParser).toEqual(prettyParser);
         });
+        it(`Doesn't change formatting of ${file}`, async () => {
+            const originalGrammar = (
+                await fs.readFile(path.join(__dirname, "./grammars/", file))
+            ).toString();
+            const prettyGrammar = printPrettier(originalGrammar);
+
+            expect(originalGrammar).toEqual(prettyGrammar);
+        });
     }
 });
