@@ -117,7 +117,7 @@ function handleRemainingComment(comment, text, options, ast, isLastComment) {
 export const languages = [
     {
         name: "pegjs",
-        extensions: [".pegjs"],
+        extensions: [".pegjs", ".peggy"],
         parsers: ["pegjs-parser"],
     },
 ];
