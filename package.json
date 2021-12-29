@@ -1,6 +1,6 @@
 {
     "name": "prettier-plugin-pegjs",
-    "description": "A Prettier plugin for formatting Pegjs and Peggyjs grammars",
+    "description": "A Prettier plugin for formatting Pegjs and Peggy-js grammars",
     "version": "0.5.0",
     "author": {
         "name": "Jason Siefken",
@@ -44,7 +44,8 @@
     "jest": {
         "transform": {
             "\\.js$": "babel-jest",
-            "\\.pegjs$": "<rootDir>/src/tests/pegjs-preprocessor.js"
+            "\\.pegjs$": "<rootDir>/src/tests/pegjs-preprocessor.js",
+            "\\.peggy$": "<rootDir>/src/tests/pegjs-preprocessor.js"
         }
     },
     "repository": {
