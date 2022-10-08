@@ -10,6 +10,6 @@ const peg = require("pegjs");
 module.exports = {
     process: (src) => {
         const parser = peg.generate(src, { output: "source", format: "umd" });
-        return parser;
+        return { code: parser };
     },
 };
