@@ -71,7 +71,7 @@ describe("Printer", () => {
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Prints grammars with initalizer", () => {
+    it("Prints grammars with initializer", () => {
         const sources = [
             "{console.log('initializing')}; Rule = a/b/c",
             "{console.log('initializing')}\n\n Rule = a/b/c",
@@ -100,4 +100,15 @@ describe("Printer", () => {
             expect(formatted).toMatchSnapshot();
         }
     });
+    it("Issue 18 nested optional concat", ()=>{
+        const sources = [
+            "start = ($\"x\"+)?",
+            "start = $(\"x\"+)?",
+        ];
+
+        for (const src of sources) {
+            const formatted = printPrettier(src, { printWidth: 80 });
+            expect(formatted).toMatchSnapshot();
+        }
+    })
 });
