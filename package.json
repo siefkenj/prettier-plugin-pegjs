@@ -1,7 +1,7 @@
 {
     "name": "prettier-plugin-pegjs",
     "description": "A Prettier plugin for formatting Pegjs and Peggy-js grammars",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "author": {
         "name": "Jason Siefken",
         "email": "siefkenj@gmail.com"
@@ -24,22 +24,22 @@
         "build": "mkdirp build; webpack"
     },
     "dependencies": {
-        "prettier": "^2.5.1"
+        "prettier": "^2.7.1"
     },
     "devDependencies": {
-        "@babel/core": "7.16.5",
-        "@babel/preset-env": "7.16.5",
-        "babel-jest": "^27.4.5",
-        "babel-loader": "8.2.3",
-        "eslint": "^8.5.0",
-        "jest": "^27.4.5",
-        "jsdom": "^19.0.0",
+        "@babel/core": "7.19.3",
+        "@babel/preset-env": "7.19.3",
+        "babel-jest": "^29.1.2",
+        "babel-loader": "8.2.5",
+        "eslint": "^8.25.0",
+        "jest": "^29.1.2",
+        "jsdom": "^20.0.1",
         "mkdirp": "1.0.4",
         "pegjs": "0.10.0",
         "pegjs-loader": "^0.5.6",
         "resolve-cwd": "^3.0.0",
-        "webpack": "5.65.0",
-        "webpack-cli": "^4.9.1"
+        "webpack": "5.74.0",
+        "webpack-cli": "^4.10.0"
     },
     "jest": {
         "transform": {
