@@ -1,7 +1,7 @@
 {
     "name": "prettier-plugin-pegjs",
     "description": "A Prettier plugin for formatting Pegjs and Peggy-js grammars",
-    "version": "0.5.1",
+    "version": "0.5.2",
     "author": {
         "name": "Jason Siefken",
         "email": "siefkenj@gmail.com"

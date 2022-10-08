@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Printer Issue 18 nested optional concat 1`] = `
+"start = ($"x"+)?
+"
+`;
+
+exports[`Printer Issue 18 nested optional concat 2`] = `
+"start = $("x"+)?
+"
+`;
+
 exports[`Printer Prints grammars with actions 1`] = `
 "start = (a:"a") & { return a === "a"; }
 "
@@ -232,7 +242,7 @@ exports[`Printer Prints grammars with comments 9`] = `
 "
 `;
 
-exports[`Printer Prints grammars with initalizer 1`] = `
+exports[`Printer Prints grammars with initializer 1`] = `
 "{ console.log("initializing"); }
 
 Rule
@@ -242,7 +252,7 @@ Rule
 "
 `;
 
-exports[`Printer Prints grammars with initalizer 2`] = `
+exports[`Printer Prints grammars with initializer 2`] = `
 "{ console.log("initializing"); }
 
 Rule

@@ -77,12 +77,22 @@ function nodeExpressionNeedsWrapping(node) {
         node.type !== "text" &&
         isSuffixOperator(node.expression)
     ) {
-        if (node.type === "") return true;
+        if (node.type === "") {
+            return true;
+        }
     }
     if (node.type === "labeled" && isSuffixOperator(node.expression)) {
         // Suffix operators will wrap their arguments in parenthesis if needed
         // so we don't need to wrap them in another set
         return false;
+    }
+    // A suffix operator with a prefix/suffix operator child must have parens.
+    // E.g. `($"x"+)?` otherwise there may be two suffix operators that appear in a row!
+    if (
+        isSuffixOperator(node) &&
+        (isPrefixOperator(node.expression) || isSuffixOperator(node.expression))
+    ) {
+        return true;
     }
     // Normally `labeled` expressions are wrapped in parens, but
     // if they are part of a choice, we don't want them wrapped.
