@@ -75,6 +75,10 @@ describe("Printer", () => {
         const sources = [
             "{console.log('initializing')}; Rule = a/b/c",
             "{console.log('initializing')}\n\n Rule = a/b/c",
+            "{{console.log('initializing global')}}\n\n Rule = a/b/c",
+            "{{console.log('initializing global')}}; Rule = a/b/c",
+            "{{console.log('initializing global')}}\n\n {console.log('initializing local')}\n\n Rule = a/b/c",
+            "{{console.log('initializing global')}}; {console.log('initializing local')}; Rule = a/b/c",
         ];
 
         for (const src of sources) {

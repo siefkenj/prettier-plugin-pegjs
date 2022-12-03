@@ -262,6 +262,50 @@ Rule
 "
 `;
 
+exports[`Printer Prints grammars with initializer 3`] = `
+"{{ console.log("initializing global"); }}
+
+Rule
+  = a
+  / b
+  / c
+"
+`;
+
+exports[`Printer Prints grammars with initializer 4`] = `
+"{{ console.log("initializing global"); }}
+
+Rule
+  = a
+  / b
+  / c
+"
+`;
+
+exports[`Printer Prints grammars with initializer 5`] = `
+"{{ console.log("initializing global"); }}
+
+{ console.log("initializing local"); }
+
+Rule
+  = a
+  / b
+  / c
+"
+`;
+
+exports[`Printer Prints grammars with initializer 6`] = `
+"{{ console.log("initializing global"); }}
+
+{ console.log("initializing local"); }
+
+Rule
+  = a
+  / b
+  / c
+"
+`;
+
 exports[`Printer Prints grammars without actions 1`] = `
 "Rule
   = a

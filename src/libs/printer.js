@@ -53,7 +53,7 @@ function isSuffixOperator(node) {
 }
 
 function hasCodeBlock(node) {
-    return ["action", "semantic_and", "semantic_not", "initializer"].includes(
+    return ["action", "semantic_and", "semantic_not", "initializer", "ginitializer"].includes(
         node.type
     );
 }
@@ -116,23 +116,27 @@ export function printPegjsAst(path, options, print) {
     switch (node.type) {
         case "grammar":
             // This is the root node of a Pegjs grammar
-            body = join(concat([hardline, hardline]), path.map(print, "rules"));
-
-            if (!node.initializer) {
-                // A `hardline` is inserted at the end so that any trailing comments
-                // are printed
-                return concat([body, hardline]);
-            }
-
             // A `hardline` is inserted at the end so that any trailing comments
             // are printed
-            return concat([
-                path.call(print, "initializer"),
-                hardline,
-                hardline,
-                body,
-                hardline,
-            ]);
+            body = [join([hardline, hardline], path.map(print, "rules")), hardline];
+
+            if (node.initializer) {
+                body.unshift(
+                    path.call(print, "initializer"),
+                    hardline,
+                    hardline
+                );
+            }
+
+            if (node.ginitializer) {
+                body.unshift(
+                    path.call(print, "ginitializer"),
+                    hardline,
+                    hardline
+                );
+            }
+
+            return body;
         case "rule":
             lhs = [node.name];
             if (node.displayName) {
@@ -311,7 +315,13 @@ export function embed(path, print, textToDoc, options) {
         return null;
     }
 
-    function wrapCode(code) {
+    /**
+     * Format code, and wrap it in `{ }` or `{{ }}`
+     *
+     * @param {string} code - text of the embedded code to format.
+     * @param {boolean} double - whether to use single or double braces
+     */
+    function wrapCode(code, double = false) {
         // By default, prettier will add a hardline at the end of a parsed document.
         // We don't want this hardline in embedded code.
         const parser = options.actionParser || "babel";
@@ -320,14 +330,14 @@ export function embed(path, print, textToDoc, options) {
                 textToDoc(code, { parser })
             );
             return group(
-                concat(["{", indent(concat([line, formatted])), line, "}"])
+                [double ? "{{": "{", indent(concat([line, formatted])), line, double ? "}}" : "}"]
             );
         } catch (e) {
             console.warn(
                 `Could not the following code with the '${parser}' parser, so leaving unformatted. Code:`,
                 JSON.stringify(code)
             );
-            return concat(["{", code, "}"]);
+            return [double ? "{{" : "{", code, double ? "}}" : "}"];
         }
     }
 
@@ -347,6 +357,8 @@ export function embed(path, print, textToDoc, options) {
             return concat([prefix, indent(concat([" ", wrapCode(node.code)]))]);
         case "initializer":
             return wrapCode(node.code);
+        case "ginitializer":
+            return wrapCode(node.code, true);
         default:
             return false;
     }
