@@ -127,14 +127,20 @@
 
 Grammar
   = __
-    initializer:(a:Initializer { return a; })?
-    __?
+    ginitializer:(a:GInitializer __ { return a; })?
+    initializer:(a:Initializer __ { return a; })?
     rules:(a:Rule __ { return a; })+ {
       return createNode("grammar", {
+        ginitializer,
         initializer,
         rules,
         comments,
       });
+    }
+
+GInitializer
+  = code:("{" code:CodeBlock "}" { return createNode("ginitializer", { code }); }) EOS {
+      return code;
     }
 
 Initializer
