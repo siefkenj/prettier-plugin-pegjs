@@ -115,4 +115,14 @@ describe("Printer", () => {
             expect(formatted).toMatchSnapshot();
         }
     })
+    it("Print typescript action", ()=>{
+        const sources = [
+            "start = 'a' {return 5 as any}",
+        ];
+
+        for (const src of sources) {
+            const formatted = printPrettier(src, { printWidth: 80 });
+            expect(formatted).toMatchSnapshot();
+        }
+    })
 });

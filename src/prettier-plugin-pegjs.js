@@ -152,14 +152,14 @@ export const options = {
     actionParser: {
         type: "string",
         category: "Global",
-        default: "babel",
+        default: "babel-ts",
         description: "The parser to use for the content of Pegjs actions",
     },
 };
 
 export const defaultOptions = {
     tabWidth: 2,
-    actionParser: "babel",
+    actionParser: "babel-ts",
 };
 
 export default { languages, parsers, printers, options };

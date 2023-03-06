@@ -53,6 +53,8 @@ describe("Basic parse", () => {
             "start = ('a' b:'b' 'c') { return b; }",
             "start = (a:'a' { return a; }) { return a; }",
             "start = ('a' / b:'b' / 'c') { return b; }",
+            // Typescript action
+            "start = ('a' / b:'b' / 'c') { return b as string; }",
         ];
 
         for (const grammar of grammars) {

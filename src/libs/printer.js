@@ -189,7 +189,7 @@ export function printPegjsAst(path, options, print) {
             parent = path.getParentNode();
             if (parent && parent.type === "rule") {
                 // Rules are the top-level objects of a grammar. If we are the child
-                // of a rule, we want to line-break nomatter what.
+                // of a rule, we want to line-break no matter what.
                 body.push(breakParent);
             }
 
@@ -344,7 +344,7 @@ export function embed(path, print, textToDoc, options) {
             ]);
         } catch (e) {
             console.warn(
-                `Could not the following code with the '${parser}' parser, so leaving unformatted. Code:`,
+                `Could not process the following code with the '${parser}' parser, so leaving unformatted. Code:`,
                 JSON.stringify(code)
             );
             return [double ? "{{" : "{", code, double ? "}}" : "}"];
