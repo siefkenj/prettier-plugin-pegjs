@@ -53,9 +53,13 @@ function isSuffixOperator(node) {
 }
 
 function hasCodeBlock(node) {
-    return ["action", "semantic_and", "semantic_not", "initializer", "ginitializer"].includes(
-        node.type
-    );
+    return [
+        "action",
+        "semantic_and",
+        "semantic_not",
+        "initializer",
+        "ginitializer",
+    ].includes(node.type);
 }
 
 /**
@@ -118,7 +122,10 @@ export function printPegjsAst(path, options, print) {
             // This is the root node of a Pegjs grammar
             // A `hardline` is inserted at the end so that any trailing comments
             // are printed
-            body = [join([hardline, hardline], path.map(print, "rules")), hardline];
+            body = [
+                join([hardline, hardline], path.map(print, "rules")),
+                hardline,
+            ];
 
             if (node.initializer) {
                 body.unshift(
@@ -182,7 +189,7 @@ export function printPegjsAst(path, options, print) {
             parent = path.getParentNode();
             if (parent && parent.type === "rule") {
                 // Rules are the top-level objects of a grammar. If we are the child
-                // of a rule, we want to line-break nomatter what.
+                // of a rule, we want to line-break no matter what.
                 body.push(breakParent);
             }
 
@@ -329,12 +336,15 @@ export function embed(path, print, textToDoc, options) {
             const formatted = utils.stripTrailingHardline(
                 textToDoc(code, { parser })
             );
-            return group(
-                [double ? "{{": "{", indent(concat([line, formatted])), line, double ? "}}" : "}"]
-            );
+            return group([
+                double ? "{{" : "{",
+                indent(concat([line, formatted])),
+                line,
+                double ? "}}" : "}",
+            ]);
         } catch (e) {
             console.warn(
-                `Could not the following code with the '${parser}' parser, so leaving unformatted. Code:`,
+                `Could not process the following code with the '${parser}' parser, so leaving unformatted. Code:`,
                 JSON.stringify(code)
             );
             return [double ? "{{" : "{", code, double ? "}}" : "}"];

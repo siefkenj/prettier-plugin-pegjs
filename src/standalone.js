@@ -21,8 +21,8 @@ import babelPlugin from "prettier/parser-babel";
 function printPrettier(source = "", options = {}) {
     // Load the prettier and babel plugins, but also allow
     // other plugins to be passed in.
-    const plugins = options.plugins || []
-    plugins.push(prettierPluginPegjs, babelPlugin)
+    const plugins = options.plugins || [];
+    plugins.push(prettierPluginPegjs, babelPlugin);
 
     return Prettier.format(source, {
         printWidth: 80,
