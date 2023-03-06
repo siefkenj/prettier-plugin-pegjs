@@ -2,7 +2,7 @@ import PegParser from "../grammars/pegjs.pegjs";
 
 /**
  * Returns a copy of the AST without the `.loc` properties.
- * This makes the datastructure smaller and easier to analyze
+ * This makes the data structure smaller and easier to analyze
  * when printed with console.log
  *
  * @export

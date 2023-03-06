@@ -53,9 +53,13 @@ function isSuffixOperator(node) {
 }
 
 function hasCodeBlock(node) {
-    return ["action", "semantic_and", "semantic_not", "initializer", "ginitializer"].includes(
-        node.type
-    );
+    return [
+        "action",
+        "semantic_and",
+        "semantic_not",
+        "initializer",
+        "ginitializer",
+    ].includes(node.type);
 }
 
 /**
@@ -118,7 +122,10 @@ export function printPegjsAst(path, options, print) {
             // This is the root node of a Pegjs grammar
             // A `hardline` is inserted at the end so that any trailing comments
             // are printed
-            body = [join([hardline, hardline], path.map(print, "rules")), hardline];
+            body = [
+                join([hardline, hardline], path.map(print, "rules")),
+                hardline,
+            ];
 
             if (node.initializer) {
                 body.unshift(
@@ -329,9 +336,12 @@ export function embed(path, print, textToDoc, options) {
             const formatted = utils.stripTrailingHardline(
                 textToDoc(code, { parser })
             );
-            return group(
-                [double ? "{{": "{", indent(concat([line, formatted])), line, double ? "}}" : "}"]
-            );
+            return group([
+                double ? "{{" : "{",
+                indent(concat([line, formatted])),
+                line,
+                double ? "}}" : "}",
+            ]);
         } catch (e) {
             console.warn(
                 `Could not the following code with the '${parser}' parser, so leaving unformatted. Code:`,
