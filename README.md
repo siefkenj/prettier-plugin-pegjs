@@ -97,8 +97,8 @@ printPrettier(YOUR_CODE, {
 The standard Prettier options (such as `tabWidth`) can be used. Additionally,
 you may set `actionParser` to specify how the code inside a Pegjs `action` is
 printed. `actionParser` can be the parser from any valid Prettier plugin.
-It defaults to `"babel"` for Javascript, but you could, for example, set it
-to `"typescript"` to format Typescript actions.
+It defaults to `"babel-ts"` for Javascript and Typescript, but it could be set
+to a different parser if your actions are written in a different language/dialect.
 
 ## Development
 
