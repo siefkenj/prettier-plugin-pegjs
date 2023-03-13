@@ -1,7 +1,7 @@
 import util from "util";
 import fs from "fs/promises";
 import path from "path";
-import pegjs from "pegjs";
+import * as peggy from "peggy";
 import { printPrettier } from "../standalone";
 import Prettier from "prettier";
 
@@ -35,10 +35,10 @@ describe("End to end", () => {
             ).toString();
             const prettyGrammar = printPrettier(originalGrammar);
 
-            let originalParser = pegjs.generate(originalGrammar, {
+            let originalParser = peggy.generate(originalGrammar, {
                 output: "source",
             });
-            let prettyParser = pegjs.generate(prettyGrammar, {
+            let prettyParser = peggy.generate(prettyGrammar, {
                 output: "source",
             });
 

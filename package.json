@@ -17,7 +17,7 @@
         "build/*.js.map"
     ],
     "scripts": {
-        "test": "jest src/tests",
+        "test": "vitest",
         "watch": "mkdirp build; vite build --watch",
         "build": "mkdirp build; vite build"
     },
