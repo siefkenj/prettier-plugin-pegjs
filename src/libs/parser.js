@@ -1,4 +1,4 @@
-import PegParser from "../grammars/pegjs.pegjs";
+import * as PegParser from "../grammars/pegjs.pegjs";
 
 /**
  * Returns a copy of the AST without the `.loc` properties.
