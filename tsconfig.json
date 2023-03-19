@@ -1,0 +1,28 @@
+{
+    "exclude": ["**/*.test.ts", "**/*.stub.ts", "node_modules", "**/tests/"],
+    // Having more success with listing entry points explicitly rather than specifying a directory
+    // "include": ["src"],
+    "files": ["./src/standalone.ts", "./src/prettier-plugin-pegjs.ts"],
+    "compilerOptions": {
+        // We will use esbuild to make the actual js files.
+        // We don't use tsc because it will not map imports for us so if we write
+        // `import foo from "./bar"` it does not get translated to `import foo from "./bar.js"`
+        // which means it cannot be imported via node.
+        "emitDeclarationOnly": true,
+        "declaration": true,
+        "outDir": "./build",
+        "rootDir": "./src",
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "module": "ES2020",
+        "target": "ES2020",
+        "jsx": "react",
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": true
+    }
+}
