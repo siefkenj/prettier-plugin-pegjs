@@ -144,12 +144,12 @@ of course they are not.
 
 The plugin is organized as follows:
 
--   `prettier-plugin-pegjs.js` This file exports the objects required of a
+-   `prettier-plugin-pegjs.ts` This file exports the objects required of a
     Prettier plugin.
--   `standalone.js` This file wraps the Prettier parser and pre-loads
+-   `standalone.ts` This file wraps the Prettier parser and pre-loads
     `prettier-plugin-pegjs` as a plugin.
--   `grammars/pegjs.pegjs` The Pegjs grammar that parsers Pegjs grammars.
--   `libs/parser.js` The parser which loads a Pegjs-created parser and creates
+-   `grammars/pegjs.peggy` The Pegjs grammar that parsers Pegjs/Peggy grammars.
+-   `libs/parser.ts` The parser which loads a Pegjs-created parser and creates
     an AST from a string.
--   `libs/printer.js` Printers take an AST and produce a Doc (the intermediate
+-   `libs/printer.ts` Printers take an AST and produce a Doc (the intermediate
     format that Prettier uses). This is where most of the details of the plugin lie.
