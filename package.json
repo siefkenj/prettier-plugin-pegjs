@@ -14,6 +14,7 @@
     "main": "build/prettier-plugin-pegjs.js",
     "files": [
         "build/*.js",
+        "build/*.ts",
         "build/*.js.map"
     ],
     "scripts": {
