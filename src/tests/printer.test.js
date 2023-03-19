@@ -104,25 +104,49 @@ describe("Printer", () => {
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Issue 18 nested optional concat", ()=>{
+    it("Issue 18 nested optional concat", () => {
+        const sources = ['start = ($"x"+)?', 'start = $("x"+)?'];
+
+        for (const src of sources) {
+            const formatted = printPrettier(src, { printWidth: 80 });
+            expect(formatted).toMatchSnapshot();
+        }
+    });
+    it("Print typescript action", () => {
+        const sources = ["start = 'a' {return 5 as any}"];
+
+        for (const src of sources) {
+            const formatted = printPrettier(src, { printWidth: 80 });
+            expect(formatted).toMatchSnapshot();
+        }
+    });
+    it("Print repetition rules", () => {
         const sources = [
-            "start = ($\"x\"+)?",
-            "start = $(\"x\"+)?",
+            "start = 'a'| .. |",
+            "start = 'a'|2 ..|",
+            "start = 'a'|2 .. 5|",
+            "start = 'a'| .. 5|",
+            "start = 'a'|2 .. 5,'x'|",
+            "start = 'a'| 5 |",
+            "start = x:'a'| {return parseInt(x , 10)} |",
+            "start = x:'a'| {return parseInt(x , 10)} .. 7 |",
         ];
 
         for (const src of sources) {
             const formatted = printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
-    })
-    it("Print typescript action", ()=>{
+    });
+    it("Print repetition with suffix operator", () => {
         const sources = [
-            "start = 'a' {return 5 as any}",
+            "start = ('a'| .. |)?",
+            "start = ('a'| .. |)|..|",
+            "start = ('a' 'b')| .. |",
         ];
 
         for (const src of sources) {
             const formatted = printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
-    })
+    });
 });

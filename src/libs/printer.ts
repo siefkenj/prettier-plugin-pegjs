@@ -1,14 +1,15 @@
-// If we pull in "prettier", we also pull in the `fs` module which
-// prevents the plugin from working in the browser, so we
-// pull in the standalone version.
-import Prettier from "prettier/standalone";
+import type { Printer } from "prettier";
+import { util } from "prettier";
+import { builders, utils } from "prettier/doc";
+import { AstNode, Comment } from "../types";
 
-const { util } = Prettier;
-const { builders, utils } = Prettier.doc;
+type Doc = builders.Doc;
+type PrinterPrint = Printer<AstNode | null | undefined>["print"];
+type PrinterEmbed = NonNullable<Printer<AstNode>["embed"]>;
+type PrinterComment = NonNullable<Printer<AstNode>["printComment"]>;
 
 // Commands to build the prettier syntax tree
 const {
-    concat,
     group,
     //fill,
     //ifBreak,
@@ -23,42 +24,44 @@ const {
     breakParent,
 } = builders;
 
-function wrapInParenGroup(doc) {
-    return group(concat(["(", indent(concat([softline, doc])), softline, ")"]));
+function wrapInParenGroup(doc: Doc): Doc {
+    return group(["(", indent([softline, doc]), softline, ")"]);
 }
 
 const SEMANTIC_SUFFIX_MAP = {
     semantic_and: "&",
     semantic_not: "!",
-};
+} as const;
 
 const PREFIX_MAP = {
     text: "$",
     simple_and: "&",
     simple_not: "!",
-};
+} as const;
 
 const SUFFIX_MAP = {
     optional: "?",
     zero_or_more: "*",
     one_or_more: "+",
-};
+    repeated: "|..|",
+} as const;
 
-function isPrefixOperator(node) {
+function isPrefixOperator(node: AstNode) {
     return node.type in PREFIX_MAP;
 }
 
-function isSuffixOperator(node) {
+function isSuffixOperator(node: AstNode) {
     return node.type in SUFFIX_MAP;
 }
 
-function hasCodeBlock(node) {
+function hasCodeBlock(node: AstNode) {
     return [
         "action",
         "semantic_and",
         "semantic_not",
         "initializer",
         "ginitializer",
+        "function",
     ].includes(node.type);
 }
 
@@ -69,8 +72,8 @@ function hasCodeBlock(node) {
  *
  * @param {*} node
  */
-function nodeExpressionNeedsWrapping(node) {
-    if (!node.expression) {
+function nodeExpressionNeedsWrapping(node: AstNode) {
+    if (!("expression" in node) || !node.expression) {
         return false;
     }
     // Most of the time we want to wrap expressions like `&foo?` in
@@ -81,9 +84,7 @@ function nodeExpressionNeedsWrapping(node) {
         node.type !== "text" &&
         isSuffixOperator(node.expression)
     ) {
-        if (node.type === "") {
-            return true;
-        }
+        return true;
     }
     if (node.type === "labeled" && isSuffixOperator(node.expression)) {
         // Suffix operators will wrap their arguments in parenthesis if needed
@@ -113,16 +114,20 @@ function nodeExpressionNeedsWrapping(node) {
 
 // The signature of this function is determined by the Prettier
 // plugin API.
-export function printPegjsAst(path, options, print) {
+export const printPegjsAst: PrinterPrint = (path, options, print) => {
     const node = path.getValue();
+    if (!node) {
+        console.warn("Got `undefined` node while printing");
+        return "";
+    }
 
-    let lhs, rhs, label, prefix, suffix, body, delimiters, parent;
-    switch (node.type) {
-        case "grammar":
+    const type = node.type;
+    switch (type) {
+        case "grammar": {
             // This is the root node of a Pegjs grammar
             // A `hardline` is inserted at the end so that any trailing comments
             // are printed
-            body = [
+            const body: Doc[] = [
                 join([hardline, hardline], path.map(print, "rules")),
                 hardline,
             ];
@@ -144,20 +149,21 @@ export function printPegjsAst(path, options, print) {
             }
 
             return body;
-        case "rule":
-            lhs = [node.name];
+        }
+        case "rule": {
+            const lhs: Doc[] = [node.name];
             if (node.displayName) {
                 lhs.push(" ", path.call(print, "displayName"));
             }
 
-            rhs = concat([
+            const rhs = [
                 line,
                 path.call(print, "delimiter"),
                 " ",
                 path.call(print, "expression"),
-            ]);
-            return group(concat(lhs.concat(indent(rhs))));
-
+            ];
+            return group(lhs.concat(indent(rhs)));
+        }
         case "rule_ref":
             return node.name;
 
@@ -171,41 +177,41 @@ export function printPegjsAst(path, options, print) {
         case "any":
             return ".";
 
-        case "choice":
-            rhs = path.map(print, "alternatives");
+        case "choice": {
+            const rhs = path.map(print, "alternatives");
             if (rhs.length === 0) {
                 return "";
             }
             // Delimiters (i.e., "/") are theoretically all the same,
             // but they may have comments surrounding them. To preserve these
             // comments, we actually print them.
-            delimiters = path.map(print, "delimiters");
+            const delimiters = path.map(print, "delimiters");
 
-            body = [rhs[0]];
+            const body = [rhs[0]];
             for (let i = 0; i < delimiters.length; i++) {
                 body.push(line, delimiters[i], " ", rhs[i + 1]);
             }
 
-            parent = path.getParentNode();
+            const parent = path.getParentNode();
             if (parent && parent.type === "rule") {
                 // Rules are the top-level objects of a grammar. If we are the child
                 // of a rule, we want to line-break no matter what.
                 body.push(breakParent);
             }
 
-            return concat(body);
-
+            return body;
+        }
         case "literal":
             if (node.ignoreCase) {
-                return concat([util.makeString(node.value, '"'), "i"]);
+                return [util.makeString(node.value, '"'), "i"];
             }
             return util.makeString(node.value, '"');
 
         case "group":
             return wrapInParenGroup(path.call(print, "expression"));
 
-        case "sequence":
-            body = path.map(print, "elements");
+        case "sequence": {
+            let body = path.map(print, "elements");
             // Any `action` or `choice` that appears in a sequence needs to
             // be wrapped in parens.
             body = body.map((printed, i) => {
@@ -216,72 +222,111 @@ export function printPegjsAst(path, options, print) {
                 return printed;
             });
             return group(indent(join(line, body)));
+        }
 
-        case "labeled":
-            label = node.label;
-            rhs = path.call(print, "expression");
+        case "labeled": {
+            const label = node.label;
+            let rhs = path.call(print, "expression");
             if (nodeExpressionNeedsWrapping(node)) {
                 rhs = wrapInParenGroup(rhs);
             }
-            lhs = [];
+            let lhs = [];
             if (node.pick) {
                 lhs.push("@");
             }
             if (label) {
                 lhs.push(label, ":");
             }
-            return concat([...lhs, rhs]);
-
+            return [...lhs, rhs];
+        }
         // suffix operators
         case "optional":
         case "zero_or_more":
-        case "one_or_more":
-            suffix = SUFFIX_MAP[node.type];
-            body = path.call(print, "expression");
+        case "one_or_more": {
+            const suffix = SUFFIX_MAP[node.type];
+            const body = path.call(print, "expression");
             if (nodeExpressionNeedsWrapping(node)) {
-                return concat([wrapInParenGroup(body), suffix]);
+                return [wrapInParenGroup(body), suffix];
             }
-            return concat([body, suffix]);
-
+            return [body, suffix];
+        }
         // prefix operators
         case "text":
         case "simple_and":
-        case "simple_not":
-            prefix = PREFIX_MAP[node.type];
+        case "simple_not": {
+            const prefix = PREFIX_MAP[node.type];
             if (nodeExpressionNeedsWrapping(node)) {
-                return concat([
+                return [
                     prefix,
                     wrapInParenGroup(path.call(print, "expression")),
-                ]);
+                ];
             }
-            return concat([prefix, path.call(print, "expression")]);
-
+            return [prefix, path.call(print, "expression")];
+        }
         // Things in square brackets (e.g. `[a-zUVW]`)
-        case "class":
-            prefix = node.inverted ? "^" : "";
-            suffix = node.ignoreCase ? "i" : "";
-            lhs = node.parts.map((part) => {
+        case "class": {
+            const prefix = node.inverted ? "^" : "";
+            const suffix = node.ignoreCase ? "i" : "";
+            const lhs = node.parts.map((part) => {
                 if (Array.isArray(part)) {
                     return part.join("-");
                 }
                 return part;
             });
 
-            return concat(["[", prefix, ...lhs, "]", suffix]);
+            return ["[", prefix, ...lhs, "]", suffix];
+        }
+        case "repeated": {
+            let body = path.call(print, "expression");
+            if (nodeExpressionNeedsWrapping(node)) {
+                body = wrapInParenGroup(body);
+            }
+            let min = node.min != null ? path.call(print, "min") : "";
+            if (min === "0") {
+                // A minimum value of zero is the same as not listing an explicit minimum at all.
+                min = "";
+            }
+            const max = node.max != null ? path.call(print, "max") : "";
+            let range: Doc[] = [min, "..", max];
+            if (node.min == null) {
+                range = [max];
+            }
+            if (node.min == null && node.max == null) {
+                range = [".."];
+            }
+            let delim: Doc[] = [];
+            if (node.delimiter) {
+                delim.push(",", " ", path.call(print, "delimiter"));
+            }
+            return [body, "|", ...range, ...delim, "|"];
+        }
+        case "constant":
+        case "variable":
+            return node.value != null ? String(node.value) : "";
 
+        case "function":
+        case "initializer":
+        case "ginitializer":
+        case "action":
         case "comment":
-            // XXX I'm not sure why this is here. I don't think this code is ever reached.
-            return concat(["A COMMENT", node.value]);
-
-        default:
+        case "semantic_and":
+        case "semantic_not":
             console.warn(
-                `Found node with unknown type '${node.type}'`,
+                `Encountered node of type "${type}"; this type of node should have been processed by its parent. If you're seeing this, please report an issue on Github.`
+            );
+            return "";
+
+        default: {
+            const unmatchedType: void = type;
+            console.warn(
+                `Found node with unknown type '${unmatchedType}'`,
                 JSON.stringify(node)
             );
+        }
     }
 
     throw new Error(`Could not find printer for node ${JSON.stringify(node)}`);
-}
+};
 
 /**
  * This is called by Prettier whenever a comment is to be printed.
@@ -292,29 +337,22 @@ export function printPegjsAst(path, options, print) {
  * @param {*} commentPath
  * @param {*} options
  */
-export function printComment(commentPath) {
-    const comment = commentPath.getValue();
-
-    const prefix = comment.forceBreakAfter ? hardline : "";
+export const printComment: PrinterComment = (commentPath) => {
+    const comment = commentPath.getValue() as Comment;
 
     if (comment.multiline) {
-        return concat([prefix, "/*", comment.value, "*/"]);
+        return ["/*", comment.value, "*/"];
     }
-    return concat([prefix, "//", comment.value]);
-}
+    return ["//", comment.value];
+};
 
 /**
  * Used to print embedded javascript codeblocks. This function
  * is called on every node. If `null` is returned, the Pegjs
  * printer is used. Otherwise, `textToDoc` can be used to select a
  * different one.
- *
- * @param {*} path
- * @param {function} print
- * @param {function} textToDoc
- * @param {object} options
  */
-export function embed(path, print, textToDoc, options) {
+export const embed: PrinterEmbed = (path, print, textToDoc, options) => {
     const node = path.getValue();
     if (!hasCodeBlock(node)) {
         // Returning null tells Prettier to use the default printer
@@ -328,17 +366,17 @@ export function embed(path, print, textToDoc, options) {
      * @param {string} code - text of the embedded code to format.
      * @param {boolean} double - whether to use single or double braces
      */
-    function wrapCode(code, double = false) {
+    function wrapCode(code: string, double = false): Doc {
         // By default, prettier will add a hardline at the end of a parsed document.
         // We don't want this hardline in embedded code.
-        const parser = options.actionParser || "babel";
+        const parser = (options as any).actionParser || "babel";
         try {
             const formatted = utils.stripTrailingHardline(
                 textToDoc(code, { parser })
             );
             return group([
                 double ? "{{" : "{",
-                indent(concat([line, formatted])),
+                indent([line, formatted]),
                 line,
                 double ? "}}" : "}",
             ]);
@@ -358,18 +396,19 @@ export function embed(path, print, textToDoc, options) {
             if (nodeExpressionNeedsWrapping(node)) {
                 body = wrapInParenGroup(body);
             }
-            body = concat([body, indent(concat([" ", wrapCode(node.code)]))]);
+            body = [body, indent([" ", wrapCode(node.code)])];
             return body;
         case "semantic_and":
         case "semantic_not":
             prefix = SEMANTIC_SUFFIX_MAP[node.type];
-
-            return concat([prefix, indent(concat([" ", wrapCode(node.code)]))]);
+            return [prefix, indent([" ", wrapCode(node.code)])];
+        case "function":
+            return wrapCode(node.value);
         case "initializer":
             return wrapCode(node.code);
         case "ginitializer":
             return wrapCode(node.code, true);
         default:
-            return false;
+            return null;
     }
-}
+};

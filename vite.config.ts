@@ -5,11 +5,14 @@ import * as peggy from "peggy";
 export default defineConfig({
     plugins: [peggyTransformer()],
     build: {
+        // We clear the outDir before building in the `npm run build` step
+        // and then populate it with typescript files, so avoid clearing here.
+        emptyOutDir: false,
         outDir: "./build",
         lib: {
             entry: {
-                "prettier-plugin-pegjs": "./src/prettier-plugin-pegjs.js",
-                standalone: "./src/standalone.js",
+                "prettier-plugin-pegjs": "./src/prettier-plugin-pegjs.ts",
+                standalone: "./src/standalone.ts",
             },
             formats: ["cjs"],
         },
@@ -21,7 +24,7 @@ export default defineConfig({
         },
         sourcemap: true,
     },
-    
+
     test: {
         globals: true,
     },
