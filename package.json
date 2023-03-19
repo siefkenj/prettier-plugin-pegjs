@@ -19,14 +19,16 @@
     "scripts": {
         "test": "vitest",
         "watch": "mkdirp build; vite build --watch",
-        "build": "mkdirp build; vite build"
+        "build": "rm -rf build; mkdirp build; tsc --build && vite build"
     },
     "dependencies": {
+        "@types/node": "^18.15.3",
         "prettier": "^2.8.4"
     },
     "devDependencies": {
         "@babel/core": "7.21.0",
         "@babel/preset-env": "7.20.2",
+        "@types/prettier": "^2.7.2",
         "eslint": "^8.36.0",
         "jsdom": "^21.1.1",
         "mkdirp": "2.1.5",

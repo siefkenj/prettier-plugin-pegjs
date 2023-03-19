@@ -56,7 +56,7 @@ describe("End to end", () => {
             ).toString();
             const prettyGrammar = printPrettier(originalGrammar);
 
-            expect(originalGrammar).toEqual(prettyGrammar);
+            expect(prettyGrammar).toEqual(originalGrammar);
         });
     }
 });

@@ -1,22 +1,29 @@
-import Prettier from "prettier/standalone";
+import { util } from "prettier";
 import { parse } from "./libs/parser";
 import { printPegjsAst, printComment, embed } from "./libs/printer";
+import type { Printer } from "prettier";
+import { AstNode } from "./types";
 
-const { util } = Prettier;
+type PrinterComments = NonNullable<Printer["handleComments"]>;
+type PrinterOwnLine = NonNullable<PrinterComments["ownLine"]>;
+type PrinterEndOfLine = NonNullable<PrinterComments["endOfLine"]>;
+type PrinterRemaining = NonNullable<PrinterComments["remaining"]>;
+
 /**
  * This is called by prettier whenever it detects a comment on its own
  * line (i.e., only whitespace before/after). We have a chance to change what
  * node the comment is assigned to.
  *
- * @param {object} comment
- * @param {string} text
- * @param {object} options
- * @param {object} ast
- * @param {boolean} isLastComment
  * @returns {boolean} `true` if the comment was handled, `false` to pass through to Prettier's default handler
  */
-function handleOwnLineComment(comment, text, options, ast, isLastComment) {
-    if (options.debugComments && comment.value.includes("debug")) {
+const handleOwnLineComment: PrinterOwnLine = (
+    comment,
+    text,
+    options,
+    ast,
+    isLastComment
+): boolean => {
+    if ((options as any).debugComments && comment.value.includes("debug")) {
         console.log("handleOwnLineComment", comment);
     }
 
@@ -42,7 +49,8 @@ function handleOwnLineComment(comment, text, options, ast, isLastComment) {
             return true;
         }
     }
-}
+    return false;
+};
 
 /**
  * This is called by prettier whenever it detects a comment at the end of a line
@@ -50,15 +58,16 @@ function handleOwnLineComment(comment, text, options, ast, isLastComment) {
  * after the comment). We have a chance to change what
  * node the comment is assigned to.
  *
- * @param {object} comment
- * @param {string} text
- * @param {object} options
- * @param {object} ast
- * @param {boolean} isLastComment
  * @returns {boolean} `true` if the comment was handled, `false` to pass through to Prettier's default handler
  */
-function handleEndOfLineComment(comment, text, options, ast, isLastComment) {
-    if (options.debugComments && comment.value.includes("debug")) {
+const handleEndOfLineComment: PrinterEndOfLine = (
+    comment,
+    text,
+    options,
+    ast,
+    isLastComment
+): boolean => {
+    if ((options as any).debugComments && comment.value.includes("debug")) {
         console.log("handleEndOfLineComment", comment);
     }
 
@@ -94,25 +103,27 @@ function handleEndOfLineComment(comment, text, options, ast, isLastComment) {
             return true;
         }
     }
-}
+    return false;
+};
 
 /**
  * This is called by prettier whenever it finds a comment that it cannot classify
  * as `ownLine` or `endOfLine`. We have a chance to change what
  * node the comment is assigned to.
- *
- * @param {object} comment
- * @param {string} text
- * @param {object} options
- * @param {object} ast
- * @param {boolean} isLastComment
  * @returns {boolean} `true` if the comment was handled, `false` to pass through to Prettier's default handler
  */
-function handleRemainingComment(comment, text, options, ast, isLastComment) {
-    if (options.debugComments && comment.value.includes("debug")) {
+const handleRemainingComment: PrinterRemaining = (
+    comment,
+    text,
+    options,
+    ast,
+    isLastComment
+): boolean => {
+    if ((options as any).debugComments && comment.value.includes("debug")) {
         console.log("handleRemainingComment", comment);
     }
-}
+    return false;
+};
 
 export const languages = [
     {
@@ -126,8 +137,10 @@ export const parsers = {
     "pegjs-parser": {
         parse,
         astFormat: "pegjs-ast",
-        locStart: (node) => (node.loc || { start: { offset: 0 } }).start.offset,
-        locEnd: (node) => (node.loc || { end: { offset: 0 } }).end.offset,
+        locStart: (node: AstNode) =>
+            (node.loc || { start: { offset: 0 } }).start.offset,
+        locEnd: (node: AstNode) =>
+            (node.loc || { end: { offset: 0 } }).end.offset,
     },
 };
 
@@ -135,9 +148,9 @@ export const printers = {
     "pegjs-ast": {
         print: printPegjsAst,
         embed,
-        canAttachComment: (node) =>
+        canAttachComment: (node: AstNode) =>
             node && node.type && node.type !== "comment",
-        isBlockComment: (node) =>
+        isBlockComment: (node: AstNode) =>
             node && node.type === "comment" && node.multiline === true,
         printComment,
         handleComments: {
