@@ -139,7 +139,7 @@ export interface Variable extends Node<"variable"> {
     value: Identifier;
 }
 export interface Constant extends Node<"constant"> {
-    value: number;
+    value: number | null;
 }
 export interface FunctionNode extends Node<"function"> {
     value: string;

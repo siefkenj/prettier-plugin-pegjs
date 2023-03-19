@@ -43,6 +43,7 @@ const SUFFIX_MAP = {
     optional: "?",
     zero_or_more: "*",
     one_or_more: "+",
+    repeated: "|..|",
 } as const;
 
 function isPrefixOperator(node: AstNode) {
@@ -60,6 +61,7 @@ function hasCodeBlock(node: AstNode) {
         "semantic_not",
         "initializer",
         "ginitializer",
+        "function",
     ].includes(node.type);
 }
 
@@ -119,7 +121,8 @@ export const printPegjsAst: PrinterPrint = (path, options, print) => {
         return "";
     }
 
-    switch (node.type) {
+    const type = node.type;
+    switch (type) {
         case "grammar": {
             // This is the root node of a Pegjs grammar
             // A `hardline` is inserted at the end so that any trailing comments
@@ -220,6 +223,7 @@ export const printPegjsAst: PrinterPrint = (path, options, print) => {
             });
             return group(indent(join(line, body)));
         }
+
         case "labeled": {
             const label = node.label;
             let rhs = path.call(print, "expression");
@@ -272,15 +276,53 @@ export const printPegjsAst: PrinterPrint = (path, options, print) => {
 
             return ["[", prefix, ...lhs, "]", suffix];
         }
-        case "comment":
-            // XXX I'm not sure why this is here. I don't think this code is ever reached.
-            return ["A COMMENT", node.value];
+        case "repeated": {
+            let body = path.call(print, "expression");
+            if (nodeExpressionNeedsWrapping(node)) {
+                body = wrapInParenGroup(body);
+            }
+            let min = node.min != null ? path.call(print, "min") : "";
+            if (min === "0") {
+                // A minimum value of zero is the same as not listing an explicit minimum at all.
+                min = "";
+            }
+            const max = node.max != null ? path.call(print, "max") : "";
+            let range: Doc[] = [min, "..", max];
+            if (node.min == null) {
+                range = [max];
+            }
+            if (node.min == null && node.max == null) {
+                range = [".."];
+            }
+            let delim: Doc[] = [];
+            if (node.delimiter) {
+                delim.push(",", " ", path.call(print, "delimiter"));
+            }
+            return [body, "|", ...range, ...delim, "|"];
+        }
+        case "constant":
+        case "variable":
+            return node.value != null ? String(node.value) : "";
 
-        default:
+        case "function":
+        case "initializer":
+        case "ginitializer":
+        case "action":
+        case "comment":
+        case "semantic_and":
+        case "semantic_not":
             console.warn(
-                `Found node with unknown type '${node.type}'`,
+                `Encountered node of type "${type}"; this type of node should have been processed by its parent. If you're seeing this, please report an issue on Github.`
+            );
+            return "";
+
+        default: {
+            const unmatchedType: void = type;
+            console.warn(
+                `Found node with unknown type '${unmatchedType}'`,
                 JSON.stringify(node)
             );
+        }
     }
 
     throw new Error(`Could not find printer for node ${JSON.stringify(node)}`);
@@ -359,8 +401,9 @@ export const embed: PrinterEmbed = (path, print, textToDoc, options) => {
         case "semantic_and":
         case "semantic_not":
             prefix = SEMANTIC_SUFFIX_MAP[node.type];
-
             return [prefix, indent([" ", wrapCode(node.code)])];
+        case "function":
+            return wrapCode(node.value);
         case "initializer":
             return wrapCode(node.code);
         case "ginitializer":

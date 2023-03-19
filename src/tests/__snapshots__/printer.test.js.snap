@@ -10,6 +10,61 @@ exports[`Printer > Issue 18 nested optional concat 2`] = `
 "
 `;
 
+exports[`Printer > Print repetition rules 1`] = `
+"start = \\"a\\"|..|
+"
+`;
+
+exports[`Printer > Print repetition rules 2`] = `
+"start = \\"a\\"|2..|
+"
+`;
+
+exports[`Printer > Print repetition rules 3`] = `
+"start = \\"a\\"|2..5|
+"
+`;
+
+exports[`Printer > Print repetition rules 4`] = `
+"start = \\"a\\"|..5|
+"
+`;
+
+exports[`Printer > Print repetition rules 5`] = `
+"start = \\"a\\"|2..5, \\"x\\"|
+"
+`;
+
+exports[`Printer > Print repetition rules 6`] = `
+"start = \\"a\\"|5|
+"
+`;
+
+exports[`Printer > Print repetition rules 7`] = `
+"start = x:\\"a\\"|{ return parseInt(x, 10); }|
+"
+`;
+
+exports[`Printer > Print repetition rules 8`] = `
+"start = x:\\"a\\"|{ return parseInt(x, 10); }..7|
+"
+`;
+
+exports[`Printer > Print repetition with suffix operator 1`] = `
+"start = (\\"a\\"|..|)?
+"
+`;
+
+exports[`Printer > Print repetition with suffix operator 2`] = `
+"start = (\\"a\\"|..|)|..|
+"
+`;
+
+exports[`Printer > Print repetition with suffix operator 3`] = `
+"start = (\\"a\\" \\"b\\")|..|
+"
+`;
+
 exports[`Printer > Print typescript action 1`] = `
 "start = \\"a\\" { return 5 as any; }
 "
