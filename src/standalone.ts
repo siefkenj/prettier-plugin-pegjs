@@ -11,7 +11,7 @@ import * as babelPlugin from "prettier/parser-babel";
 import type { Options, Plugin } from "prettier";
 
 /**
- * Format `source` LaTeX code using Prettier to format/render
+ * Format `source` code using Prettier to format/render
  * the code.
  *
  * @export
@@ -39,5 +39,3 @@ function printPrettier(
 }
 
 export { Prettier, printPrettier, prettierPluginPegjs };
-
-export const x=5
