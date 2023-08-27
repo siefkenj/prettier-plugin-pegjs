@@ -1,6 +1,6 @@
 import { PluginOption } from "vite";
 import { defineConfig } from "vitest/config";
-import * as peggy from "peggy";
+import peggy from "peggy";
 
 export default defineConfig({
     plugins: [peggyTransformer()],
@@ -14,7 +14,7 @@ export default defineConfig({
                 "prettier-plugin-pegjs": "./src/prettier-plugin-pegjs.ts",
                 standalone: "./src/standalone.ts",
             },
-            formats: ["cjs"],
+            formats: ["es", "cjs"],
         },
         rollupOptions: {
             output: {
