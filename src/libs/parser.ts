@@ -10,7 +10,7 @@ type PeggyParser = {
         message: string,
         expected: string,
         found: unknown,
-        location: unknown
+        location: unknown,
     ) => unknown;
 };
 

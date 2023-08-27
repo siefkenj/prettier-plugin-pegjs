@@ -21,7 +21,7 @@ const handleOwnLineComment: PrinterOwnLine = (
     text,
     options,
     ast,
-    isLastComment
+    isLastComment,
 ): boolean => {
     if ((options as any).debugComments && comment.value.includes("debug")) {
         console.log("handleOwnLineComment", comment);
@@ -65,7 +65,7 @@ const handleEndOfLineComment: PrinterEndOfLine = (
     text,
     options,
     ast,
-    isLastComment
+    isLastComment,
 ): boolean => {
     if ((options as any).debugComments && comment.value.includes("debug")) {
         console.log("handleEndOfLineComment", comment);
@@ -117,7 +117,7 @@ const handleRemainingComment: PrinterRemaining = (
     text,
     options,
     ast,
-    isLastComment
+    isLastComment,
 ): boolean => {
     if ((options as any).debugComments && comment.value.includes("debug")) {
         console.log("handleRemainingComment", comment);

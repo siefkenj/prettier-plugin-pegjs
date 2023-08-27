@@ -136,7 +136,7 @@ export const printPegjsAst: PrinterPrint = (path, options, print) => {
                 body.unshift(
                     path.call(print, "initializer"),
                     hardline,
-                    hardline
+                    hardline,
                 );
             }
 
@@ -144,7 +144,7 @@ export const printPegjsAst: PrinterPrint = (path, options, print) => {
                 body.unshift(
                     path.call(print, "ginitializer"),
                     hardline,
-                    hardline
+                    hardline,
                 );
             }
 
@@ -312,7 +312,7 @@ export const printPegjsAst: PrinterPrint = (path, options, print) => {
         case "semantic_and":
         case "semantic_not":
             console.warn(
-                `Encountered node of type "${type}"; this type of node should have been processed by its parent. If you're seeing this, please report an issue on Github.`
+                `Encountered node of type "${type}"; this type of node should have been processed by its parent. If you're seeing this, please report an issue on Github.`,
             );
             return "";
 
@@ -320,7 +320,7 @@ export const printPegjsAst: PrinterPrint = (path, options, print) => {
             const unmatchedType: void = type;
             console.warn(
                 `Found node with unknown type '${unmatchedType}'`,
-                JSON.stringify(node)
+                JSON.stringify(node),
             );
         }
     }
@@ -373,7 +373,7 @@ export const embed: PrinterEmbed = (path: AstPath<AstNode>, options) => {
             const parser = (options as any).actionParser || "babel-ts";
             try {
                 const formatted = utils.stripTrailingHardline(
-                    await textToDoc(code, { parser })
+                    await textToDoc(code, { parser }),
                 );
                 return group([
                     double ? "{{" : "{",
@@ -386,7 +386,7 @@ export const embed: PrinterEmbed = (path: AstPath<AstNode>, options) => {
                     `Could not process the following code with the '${parser}' parser, so leaving unformatted. Code:`,
                     JSON.stringify(code),
                     `Error message:`,
-                    e.message
+                    e.message,
                 );
                 return [double ? "{{" : "{", code, double ? "}}" : "}"];
             }
