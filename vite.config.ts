@@ -1,20 +1,21 @@
 import { PluginOption } from "vite";
 import { defineConfig } from "vitest/config";
-import * as peggy from "peggy";
+import peggy from "peggy";
+import vts from "vite-plugin-dts"
 
 export default defineConfig({
-    plugins: [peggyTransformer()],
+    plugins: [peggyTransformer(), vts()],
     build: {
         // We clear the outDir before building in the `npm run build` step
         // and then populate it with typescript files, so avoid clearing here.
         emptyOutDir: false,
-        outDir: "./build",
+        outDir: "./dist",
         lib: {
             entry: {
                 "prettier-plugin-pegjs": "./src/prettier-plugin-pegjs.ts",
                 standalone: "./src/standalone.ts",
             },
-            formats: ["cjs"],
+            formats: ["es", "cjs"],
         },
         rollupOptions: {
             output: {

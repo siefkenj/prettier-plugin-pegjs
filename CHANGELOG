@@ -1,3 +1,5 @@
+2.0.3
+  - Fixes to package.json to make importing easier in esm/cjs environments
 
 2.0.0
  - Switch to Prettier version 3

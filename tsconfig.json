@@ -10,7 +10,7 @@
         // which means it cannot be imported via node.
         "emitDeclarationOnly": true,
         "declaration": true,
-        "outDir": "./build",
+        "outDir": "./dist",
         "rootDir": "./src",
         "noImplicitAny": true,
         "strictNullChecks": true,
