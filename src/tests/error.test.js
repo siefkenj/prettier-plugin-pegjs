@@ -28,10 +28,10 @@ describe("Test grammars with errors", () => {
             ++warnings;
         };
         expect(
-            async () => await printPrettier('a \n = "a" { const 7}')
+            async () => await printPrettier('a \n = "a" { const 7}'),
         ).not.toThrow();
         expect(await printPrettier('a \n = "a" { const 7}')).toEqual(
-            'a = "a" { const 7}\n'
+            'a = "a" { const 7}\n',
         );
         expect(warnings).toEqual(2);
 

@@ -23,7 +23,7 @@ import type { Options, Plugin } from "prettier";
  */
 async function printPrettier(
     source = "",
-    options: Options & { actionParser?: string } = {}
+    options: Options & { actionParser?: string } = {},
 ) {
     // Load the prettier and babel plugins, but also allow
     // other plugins to be passed in.
