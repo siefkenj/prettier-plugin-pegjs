@@ -51,6 +51,12 @@ npm install --save-dev prettier prettier-plugin-pegjs
 npm install --global prettier prettier-plugin-pegjs
 ```
 
+### Notes on global installation
+
+As of v3, Prettier no longer automatically searches for plugins, so you must specify plugins
+with the `--plugin` option. You can try `--plugin=prettier-plugin-pegjs`. If that doesn't work,
+specify `--plugin=path/to/node_modules/prettier-plugin-pegjs/dist/prettier-plugin-pegjs.js`
+
 ## Use
 
 ### With Node.js

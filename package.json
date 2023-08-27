@@ -1,7 +1,7 @@
 {
     "name": "prettier-plugin-pegjs",
     "description": "A Prettier plugin for formatting Pegjs and Peggy-js grammars",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "type": "module",
     "author": {
         "name": "Jason Siefken",
@@ -12,22 +12,35 @@
         "parser",
         "prettier"
     ],
-    "main": "build/prettier-plugin-pegjs.js",
+    "main": "dist/prettier-plugin-pegjs.js",
     "files": [
-        "build/**/*.js",
-        "build/**/*.ts",
-        "build/**/*.js.map"
+        "dist/**/*.js",
+        "dist/**/*.ts",
+        "dist/**/*.js.map",
+        "dist/**/*.cjs",
+        "dist/**/*.cts",
+        "dist/**/*.cjs.map"
     ],
+    "exports": {
+        ".": {
+            "import": "./dist/prettier-plugin-pegjs.js",
+            "require": "./dist/prettier-plugin-pegjs.cjs"
+        },
+        "./standalone": {
+            "import": "./dist/standalone.js",
+            "require": "./dist/standalone.cjs"
+        }
+    },
     "scripts": {
         "test": "vitest",
-        "watch": "mkdirp build; vite build --watch",
-        "build": "rm -rf build; mkdirp build; tsc --build && vite build"
+        "watch": "vite build --watch",
+        "build": "vite build"
     },
     "dependencies": {
-        "@types/node": "^20.5.6",
         "prettier": "^3.0.2"
     },
     "devDependencies": {
+        "@types/node": "^20.5.6",
         "@types/prettier": "^3.0.0",
         "eslint": "^8.48.0",
         "jsdom": "^22.1.0",
@@ -35,6 +48,7 @@
         "peggy": "^3.0.2",
         "resolve-cwd": "^3.0.0",
         "vite": "^4.4.9",
+        "vite-plugin-dts": "^3.5.2",
         "vitest": "^0.34.3"
     },
     "repository": {
