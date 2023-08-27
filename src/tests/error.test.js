@@ -20,15 +20,17 @@ describe("Test grammars with errors", () => {
         expect(() => pegjsParser.parse('a \n = "a" {const 7}')).not.toThrow();
     });
 
-    it("Invalid javascript is left unformatted", () => {
+    it("Invalid javascript is left unformatted", async () => {
         const origWarn = console.warn;
         let warnings = 0;
         // Mock `console.warn` so that its output doesn't clutter up the test output
         global.console.warn = () => {
             ++warnings;
         };
-        expect(() => printPrettier('a \n = "a" { const 7}')).not.toThrow();
-        expect(printPrettier('a \n = "a" { const 7}')).toEqual(
+        expect(
+            async () => await printPrettier('a \n = "a" { const 7}')
+        ).not.toThrow();
+        expect(await printPrettier('a \n = "a" { const 7}')).toEqual(
             'a = "a" { const 7}\n'
         );
         expect(warnings).toEqual(2);
