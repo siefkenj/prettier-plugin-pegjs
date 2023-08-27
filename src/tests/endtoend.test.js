@@ -33,7 +33,7 @@ describe("End to end", () => {
             const originalGrammar = (
                 await fs.readFile(path.join(__dirname, "./grammars/", file))
             ).toString();
-            const prettyGrammar = printPrettier(originalGrammar);
+            const prettyGrammar = await printPrettier(originalGrammar);
 
             let originalParser = peggy.generate(originalGrammar, {
                 output: "source",
@@ -54,7 +54,7 @@ describe("End to end", () => {
             const originalGrammar = (
                 await fs.readFile(path.join(__dirname, "./grammars/", file))
             ).toString();
-            const prettyGrammar = printPrettier(originalGrammar);
+            const prettyGrammar = await printPrettier(originalGrammar);
 
             expect(prettyGrammar).toEqual(originalGrammar);
         });

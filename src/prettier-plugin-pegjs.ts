@@ -1,4 +1,4 @@
-import { util } from "prettier";
+import { SupportOption, util } from "prettier";
 import { parse } from "./libs/parser";
 import { printPegjsAst, printComment, embed } from "./libs/printer";
 import type { Printer } from "prettier";
@@ -161,7 +161,7 @@ export const printers = {
     },
 };
 
-export const options = {
+export const options: Record<string, SupportOption> = {
     actionParser: {
         type: "string",
         category: "Global",

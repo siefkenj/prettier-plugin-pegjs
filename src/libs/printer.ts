@@ -1,4 +1,4 @@
-import type { Printer } from "prettier";
+import type { AstPath, Printer } from "prettier";
 import { util } from "prettier";
 import { builders, utils } from "prettier/doc";
 import { AstNode, Comment } from "../types";
@@ -115,7 +115,7 @@ function nodeExpressionNeedsWrapping(node: AstNode) {
 // The signature of this function is determined by the Prettier
 // plugin API.
 export const printPegjsAst: PrinterPrint = (path, options, print) => {
-    const node = path.getValue();
+    const node = path.node;
     if (!node) {
         console.warn("Got `undefined` node while printing");
         return "";
@@ -338,7 +338,7 @@ export const printPegjsAst: PrinterPrint = (path, options, print) => {
  * @param {*} options
  */
 export const printComment: PrinterComment = (commentPath) => {
-    const comment = commentPath.getValue() as Comment;
+    const comment = commentPath.node as Comment;
 
     if (comment.multiline) {
         return ["/*", comment.value, "*/"];
@@ -352,63 +352,67 @@ export const printComment: PrinterComment = (commentPath) => {
  * printer is used. Otherwise, `textToDoc` can be used to select a
  * different one.
  */
-export const embed: PrinterEmbed = (path, print, textToDoc, options) => {
-    const node = path.getValue();
-    if (!hasCodeBlock(node)) {
-        // Returning null tells Prettier to use the default printer
-        // (in this case, the Pegjs printer)
-        return null;
-    }
-
-    /**
-     * Format code, and wrap it in `{ }` or `{{ }}`
-     *
-     * @param {string} code - text of the embedded code to format.
-     * @param {boolean} double - whether to use single or double braces
-     */
-    function wrapCode(code: string, double = false): Doc {
-        // By default, prettier will add a hardline at the end of a parsed document.
-        // We don't want this hardline in embedded code.
-        const parser = (options as any).actionParser || "babel";
-        try {
-            const formatted = utils.stripTrailingHardline(
-                textToDoc(code, { parser })
-            );
-            return group([
-                double ? "{{" : "{",
-                indent([line, formatted]),
-                line,
-                double ? "}}" : "}",
-            ]);
-        } catch (e) {
-            console.warn(
-                `Could not process the following code with the '${parser}' parser, so leaving unformatted. Code:`,
-                JSON.stringify(code)
-            );
-            return [double ? "{{" : "{", code, double ? "}}" : "}"];
+export const embed: PrinterEmbed = (path: AstPath<AstNode>, options) => {
+    return async (textToDoc, print) => {
+        const node = path.node;
+        if (!hasCodeBlock(node)) {
+            // Returning null tells Prettier to use the default printer
+            // (in this case, the Pegjs printer)
+            return undefined;
         }
-    }
 
-    let prefix, body;
-    switch (node.type) {
-        case "action":
-            body = path.call(print, "expression");
-            if (nodeExpressionNeedsWrapping(node)) {
-                body = wrapInParenGroup(body);
+        /**
+         * Format code, and wrap it in `{ }` or `{{ }}`
+         *
+         * @param {string} code - text of the embedded code to format.
+         * @param {boolean} double - whether to use single or double braces
+         */
+        async function wrapCode(code: string, double = false): Promise<Doc> {
+            // By default, prettier will add a hardline at the end of a parsed document.
+            // We don't want this hardline in embedded code.
+            const parser = (options as any).actionParser || "babel-ts";
+            try {
+                const formatted = utils.stripTrailingHardline(
+                    await textToDoc(code, { parser })
+                );
+                return group([
+                    double ? "{{" : "{",
+                    indent([line, formatted]),
+                    line,
+                    double ? "}}" : "}",
+                ]);
+            } catch (e: any) {
+                console.warn(
+                    `Could not process the following code with the '${parser}' parser, so leaving unformatted. Code:`,
+                    JSON.stringify(code),
+                    `Error message:`,
+                    e.message
+                );
+                return [double ? "{{" : "{", code, double ? "}}" : "}"];
             }
-            body = [body, indent([" ", wrapCode(node.code)])];
-            return body;
-        case "semantic_and":
-        case "semantic_not":
-            prefix = SEMANTIC_SUFFIX_MAP[node.type];
-            return [prefix, indent([" ", wrapCode(node.code)])];
-        case "function":
-            return wrapCode(node.value);
-        case "initializer":
-            return wrapCode(node.code);
-        case "ginitializer":
-            return wrapCode(node.code, true);
-        default:
-            return null;
-    }
+        }
+
+        let prefix, body;
+        switch (node.type) {
+            case "action":
+                body = path.call(print, "expression");
+                if (nodeExpressionNeedsWrapping(node)) {
+                    body = wrapInParenGroup(body);
+                }
+                body = [body, indent([" ", await wrapCode(node.code)])];
+                return body;
+            case "semantic_and":
+            case "semantic_not":
+                prefix = SEMANTIC_SUFFIX_MAP[node.type];
+                return [prefix, indent([" ", await wrapCode(node.code)])];
+            case "function":
+                return wrapCode(node.value);
+            case "initializer":
+                return wrapCode(node.code);
+            case "ginitializer":
+                return wrapCode(node.code, true);
+            default:
+                return undefined;
+        }
+    };
 };

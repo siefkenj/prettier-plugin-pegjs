@@ -11,7 +11,7 @@ console.log = (...args) => {
 };
 
 describe("Printer", () => {
-    it("Prints grammars without actions", () => {
+    it("Prints grammars without actions", async () => {
         const sources = [
             "Rule = a/b/c",
             "Rule = a",
@@ -25,11 +25,11 @@ describe("Printer", () => {
         ];
 
         for (const src of sources) {
-            const formatted = printPrettier(src, { printWidth: 80 });
+            const formatted = await printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Prints grammars with actions", () => {
+    it("Prints grammars with actions", async () => {
         const sources = [
             "start = (a:'a') &{ return a === 'a'; }",
             "start = (a:'a')? &{ return a === 'a'; }",
@@ -67,11 +67,11 @@ describe("Printer", () => {
         ];
 
         for (const src of sources) {
-            const formatted = printPrettier(src, { printWidth: 80 });
+            const formatted = await printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Prints grammars with initializer", () => {
+    it("Prints grammars with initializer", async () => {
         const sources = [
             "{console.log('initializing')}; Rule = a/b/c",
             "{console.log('initializing')}\n\n Rule = a/b/c",
@@ -82,11 +82,11 @@ describe("Printer", () => {
         ];
 
         for (const src of sources) {
-            const formatted = printPrettier(src, { printWidth: 80 });
+            const formatted = await printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Prints grammars with comments", () => {
+    it("Prints grammars with comments", async () => {
         const sources = [
             "start = // a comment\n a / b",
             "start = a // a comment\n / b",
@@ -100,27 +100,27 @@ describe("Printer", () => {
         ];
 
         for (const src of sources) {
-            const formatted = printPrettier(src, { printWidth: 80 });
+            const formatted = await printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Issue 18 nested optional concat", () => {
+    it("Issue 18 nested optional concat", async () => {
         const sources = ['start = ($"x"+)?', 'start = $("x"+)?'];
 
         for (const src of sources) {
-            const formatted = printPrettier(src, { printWidth: 80 });
+            const formatted = await printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Print typescript action", () => {
+    it("Print typescript action", async () => {
         const sources = ["start = 'a' {return 5 as any}"];
 
         for (const src of sources) {
-            const formatted = printPrettier(src, { printWidth: 80 });
+            const formatted = await printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Print repetition rules", () => {
+    it("Print repetition rules", async () => {
         const sources = [
             "start = 'a'| .. |",
             "start = 'a'|2 ..|",
@@ -133,11 +133,11 @@ describe("Printer", () => {
         ];
 
         for (const src of sources) {
-            const formatted = printPrettier(src, { printWidth: 80 });
+            const formatted = await printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
     });
-    it("Print repetition with suffix operator", () => {
+    it("Print repetition with suffix operator", async () => {
         const sources = [
             "start = ('a'| .. |)?",
             "start = ('a'| .. |)|..|",
@@ -145,7 +145,7 @@ describe("Printer", () => {
         ];
 
         for (const src of sources) {
-            const formatted = printPrettier(src, { printWidth: 80 });
+            const formatted = await printPrettier(src, { printWidth: 80 });
             expect(formatted).toMatchSnapshot();
         }
     });

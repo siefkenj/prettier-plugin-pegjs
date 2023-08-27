@@ -82,7 +82,7 @@ prettier path/to/grammar.pegjs --write
 
 ### In the Browser
 
-This package exposes a `standalone.js` that wraps prettier and exports a
+This package exposes a `standalone.ts` that wraps prettier and exports a
 `printPrettier` function that can be called as
 
 ```js
